@@ -1,487 +1,462 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vivid Zen Sakura</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;600&family=Inconsolata&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --transition-speed: 1.2s;
-            /* Vivid Zen Sakura Theme */
-            --sakura-grad-start: #FFF5F7;
-            --sakura-grad-end: #FFE6EA;
-            --sakura-text: #5C3740;
-            --sakura-accent-vivid: #E66793;
-            --sakura-content-bg: rgba(255, 235, 240, 0.94);
-            --sakura-shadow: rgba(100, 60, 70, 0.15);
-            --sakura-glow: rgba(230, 103, 147, 0.7);
-            --petal-color-1: rgba(255, 192, 203, 0.8);
-            --petal-color-2: rgba(255, 182, 193, 0.7);
-        }
-
-        *, *::before, *::after {
-             box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Roboto Serif', serif;
-            text-align: center;
-            background: linear-gradient(135deg, var(--sakura-grad-start), var(--sakura-grad-end));
-            background-size: 400% 400%;
-            animation: subtleBackgroundPulse 120s ease infinite;
-            background-attachment: fixed;
-            color: var(--sakura-text);
-            overflow: hidden;
-            position: relative;
-        }
-
-        @keyframes subtleBackgroundPulse {
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
-        }
-
-        /* --- Petal Container - Fixed to viewport, behind UI --- */
-        #petal-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 5;
-            overflow: hidden;
-            perspective: 800px;
-        }
-
-        .petal {
-            position: absolute;
-            top: -30px;
-            width: 15px;
-            height: 10px;
-            background-color: var(--petal-color-1);
-            border-radius: 1px 50% 1px 50%;
-            transform-origin: center center;
-            opacity: 0;
-            will-change: transform, opacity;
-            transform-style: preserve-3d;
-        }
-        .petal.p1 { background-color: var(--petal-color-1); }
-        .petal.p2 { background-color: var(--petal-color-2); }
-
-        @keyframes petal-fall-windy {
-             0% {
-                transform: translateY(0vh) translateX(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
-                opacity: 0;
-             }
-             10% {
-                 transform: translateY(5vh) translateX(20px) rotateX(20deg) rotateY(40deg) rotateZ(30deg) scale(1.05);
-                 opacity: 0.8;
-             }
-             25% {
-                 transform: translateY(20vh) translateX(-50px) rotateX(80deg) rotateY(100deg) rotateZ(90deg) scale(1);
-             }
-              40% {
-                 transform: translateY(35vh) translateX(40px) rotateX(140deg) rotateY(180deg) rotateZ(150deg) scale(0.95);
-             }
-             50% {
-                opacity: 0.9;
-             }
-             60% {
-                 transform: translateY(55vh) translateX(-30px) rotateX(200deg) rotateY(260deg) rotateZ(210deg) scale(1.02);
-             }
-             75% {
-                transform: translateY(75vh) translateX(15px) rotateX(250deg) rotateY(320deg) rotateZ(270deg) scale(1);
-             }
-              90% {
-                 transform: translateY(90vh) translateX(-10px) rotateX(300deg) rotateY(360deg) rotateZ(320deg) scale(0.9);
-                 opacity: 0.6;
-             }
-             100% {
-                transform: translateY(105vh) translateX(0px) rotateX(360deg) rotateY(400deg) rotateZ(360deg) scale(0.8);
-                opacity: 0;
-             }
-        }
-
-        /* --- Main UI Container --- */
-        .container {
-            width: 90%; max-width: 800px;
-            user-select: none; position: relative;
-            padding: 30px 15px; z-index: 10;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .yin-yang-container {
-            display: inline-block;
-            animation: continuous-spin 25s linear infinite, subtle-bounce 4s ease-in-out infinite;
-        }
-        /* --- Yin Yang Styling --- */
-        .yin-yang {
-            font-size: 130px;
-            cursor: pointer;
-            transition: all 0.5s ease-out;
-            color: var(--sakura-accent-vivid);
-            margin-bottom: 15px;
-            line-height: 1;
-            transform-origin: center center;
-            will-change: transform, filter;
-            animation: subtle-glow-sakura-vivid 4s ease-in-out infinite;
-        }
-
-        .yin-yang.clicked {
-            animation: coin-flip 1s ease-out, click-glow 1s ease-out;
-        }
-
-
-        @keyframes click-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-        }
-
-        @keyframes subtle-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        @keyframes subtle-glow-sakura-vivid {
-            0%, 100% { filter: drop-shadow(0 0 5px var(--sakura-glow)); }
-            50% { filter: drop-shadow(0 0 12px var(--sakura-glow)); }
-        }
-
-        @keyframes coin-flip {
-            0%   { transform: perspective(1000px) rotateY(0deg) scale(1); }
-            50%  { transform: perspective(1000px) rotateY(180deg) scale(1.15); }
-            100% { transform: perspective(1000px) rotateY(360deg) scale(1); }
-        }
-
-/* New glow animation for click – makes the glow brighter briefly */
-        @keyframes click-glow {
-            0%   { filter: drop-shadow(0 0 5px var(--sakura-glow)); }
-            50%  { filter: drop-shadow(0 0 20px var(--sakura-glow)); }
-            100% { filter: drop-shadow(0 0 5px var(--sakura-glow)); }
-        }
-
-        /* Content box */
-        .content {
-            background-color: var(--sakura-content-bg); color: var(--sakura-text);
-            display: none; white-space: pre-wrap;
-            overflow-wrap: break-word; word-wrap: break-word;
-            overflow-x: hidden; line-height: 1.75; font-size: 1.2em;
-            min-height: 100px; height: auto; max-height: 65vh;
-            overflow-y: auto; padding: 30px 35px; border-radius: 18px;
-            box-shadow: 0 10px 25px var(--sakura-shadow); margin: 25px auto 0;
-            opacity: 0; transition: opacity 1.2s ease; text-align: center;
-            width: 100%; max-width: 100%; position: relative; will-change: opacity;
-        }
-
-        .snippet-text {
-             display: inline-block; transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-             opacity: 1; transform: translateY(0); will-change: opacity, transform;
-        }
-        .snippet-text.entering { opacity: 0; transform: translateY(15px); }
-        .show { display: block; opacity: 1; }
-
-        /* Choice text styling */
-        .choice {
-            font-size: 1.1em; margin-top: 10px; margin-bottom: 25px; font-weight: 400;
-            opacity: 0.75; transition: opacity 0.8s ease; color: var(--sakura-accent-vivid);
-        }
-
-        #snippet-display .empty-paren {
-            font-size: 2em; margin: 0.6em 0; color: var(--sakura-accent-vivid);
-            letter-spacing: 0.1em; display: block;
-        }
-
-        /* --- Sound Control --- */
-        .sound-control {
-            position: fixed; bottom: 15px; right: 15px; font-size: 20px; cursor: pointer;
-            opacity: 0.6; transition: opacity 0.3s; z-index: 20;
-        }
-        .sound-control:hover { opacity: 1; }
-
-        /* --- About Section Styling --- */
-        .about {
-            position: absolute; top: 15px; right: 15px;
-            cursor: pointer; font-size: 20px; opacity: 0.7; transition: opacity 0.3s;
-            color: var(--sakura-accent-vivid); z-index: 30;
-        }
-        .about:hover { opacity: 1; }
-
-        .about-content {
-            display: none; position: absolute;
-            top: 45px; right: 15px;
-            width: clamp(280px, 85%, 320px);
-            background-color: rgba(255, 245, 247, 0.98); color: var(--sakura-text);
-            padding: 25px; padding-top: 35px; border-radius: 10px;
-            box-shadow: 0 6px 18px var(--sakura-shadow); z-index: 40;
-            text-align: left; font-size: 0.95em;
-            opacity: 0; transform: translateY(-10px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        .about-content.show-about {
-            display: block; opacity: 1; transform: translateY(0);
-        }
-        .about-content span#close-about {
-             position: absolute; top: 8px; right: 8px; cursor: pointer; padding: 5px;
-             font-size: 1.4em; line-height: 1; opacity: 0.7; transition: opacity 0.2s;
-        }
-        .about-content span#close-about:hover { opacity: 1; }
-        .about-content a { color: #CC6A8F; text-decoration: none; font-weight: 600; }
-        .about-content a:hover { text-decoration: underline; }
-        .about-content strong { color: #B35C7E; }
-
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 768px) {
-             .yin-yang { font-size: 110px; }
-             .content { font-size: 1.1em; padding: 25px 30px; max-height: 60vh; min-height: 80px;}
-             .petal { width: 12px; height: 8px; }
-             .about-content { right: 10px; }
-        }
-        @media (max-width: 480px) {
-            .container { width: 95%; padding: 20px 10px; }
-            .yin-yang { font-size: 90px; }
-            .content { font-size: 1.05em; padding: 20px 20px; max-height: 55vh; min-height: 70px;}
-            .choice { font-size: 1em; }
-            .about { top: 10px; right: 10px; font-size: 18px;}
-            .about-content { top: 35px; right: 5px; width: calc(100% - 10px); }
-            .petal { width: 10px; height: 6px; }
-            .sound-control { font-size: 18px; bottom: 10px; right: 10px; }
-        }
-
-         /* --- Reduced Motion --- */
-         @media (prefers-reduced-motion: reduce) {
-             body { animation: none !important; }
-             .yin-yang, .yin-yang.clicked { 
-                 animation: none !important; 
-                 transition: opacity 0.3s ease-out !important;
-             }
-             #petal-container, .petal { display: none !important; }
-             .content, .about-content, .snippet-text, .sound-control, .choice, .about {
-                 transition: opacity 0.5s ease-out !important;
-             }
-         }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vivid Zen Sakura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;600&family=Inconsolata&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --transition-speed: 1.2s;
+      /* Vivid Zen Sakura Theme */
+      --sakura-grad-start: #FFF5F7;
+      --sakura-grad-end: #FFE6EA;
+      --sakura-text: #5C3740;
+      --sakura-accent-vivid: #E66793;
+      --sakura-content-bg: rgba(255, 235, 240, 0.94);
+      --sakura-shadow: rgba(100, 60, 70, 0.15);
+      --sakura-glow: rgba(230, 103, 147, 0.7);
+      --petal-color-1: rgba(255, 192, 203, 0.8);
+      --petal-color-2: rgba(255, 182, 193, 0.7);
+    }
+    
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Roboto Serif', serif;
+      text-align: center;
+      background: linear-gradient(135deg, var(--sakura-grad-start), var(--sakura-grad-end));
+      background-size: 400% 400%;
+      animation: subtleBackgroundPulse 120s ease infinite;
+      background-attachment: fixed;
+      color: var(--sakura-text);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    @keyframes subtleBackgroundPulse {
+      0% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0% 50% }
+    }
+    
+    /* --- Petal Container - Fixed to viewport, behind UI --- */
+    #petal-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+      perspective: 800px;
+    }
+    
+    .petal {
+      position: absolute;
+      top: -30px;
+      width: 15px;
+      height: 10px;
+      background-color: var(--petal-color-1);
+      border-radius: 1px 50% 1px 50%;
+      transform-origin: center center;
+      opacity: 0;
+      will-change: transform, opacity;
+      transform-style: preserve-3d;
+    }
+    .petal.p1 { background-color: var(--petal-color-1); }
+    .petal.p2 { background-color: var(--petal-color-2); }
+    
+    @keyframes petal-fall-windy {
+      0% { transform: translateY(0vh) translateX(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); opacity: 0; }
+      10% { transform: translateY(5vh) translateX(20px) rotateX(20deg) rotateY(40deg) rotateZ(30deg) scale(1.05); opacity: 0.8; }
+      25% { transform: translateY(20vh) translateX(-50px) rotateX(80deg) rotateY(100deg) rotateZ(90deg) scale(1); }
+      40% { transform: translateY(35vh) translateX(40px) rotateX(140deg) rotateY(180deg) rotateZ(150deg) scale(0.95); }
+      50% { opacity: 0.9; }
+      60% { transform: translateY(55vh) translateX(-30px) rotateX(200deg) rotateY(260deg) rotateZ(210deg) scale(1.02); }
+      75% { transform: translateY(75vh) translateX(15px) rotateX(250deg) rotateY(320deg) rotateZ(270deg) scale(1); }
+      90% { transform: translateY(90vh) translateX(-10px) rotateX(300deg) rotateY(360deg) rotateZ(320deg) scale(0.9); opacity: 0.6; }
+      100% { transform: translateY(105vh) translateX(0px) rotateX(360deg) rotateY(400deg) rotateZ(360deg) scale(0.8); opacity: 0; }
+    }
+    
+    /* --- Main UI Container --- */
+    .container {
+      width: 90%; max-width: 800px;
+      user-select: none; position: relative;
+      padding: 30px 15px; z-index: 10;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    
+    /* Container for the symbol, handles continuous rotation */
+    .yin-yang-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: continuous-spin 25s linear infinite;
+      transform-origin: center center;
+    }
+    
+    /* --- Yin Yang Styling --- */
+    .yin-yang {
+      font-size: 130px;
+      cursor: pointer;
+      /* Transition both filter and transform for smoother effects */
+      transition: transform 0.5s ease, filter 0.5s ease;
+      color: var(--sakura-accent-vivid);
+      margin-bottom: 0;
+      line-height: 1;
+      transform-origin: center center;
+      will-change: transform, filter;
+      animation: subtle-glow-sakura-vivid 4s ease-in-out infinite;
+    }
+    
+    /* Enhanced glow and scale on click */
+    .yin-yang.clicked {
+      animation: click-glow 1s ease-out;
+      transform: scale(1.05);
+    }
+    
+    /* Subtle ambient glow animation for the symbol */
+    @keyframes subtle-glow-sakura-vivid {
+      0%, 100% { filter: drop-shadow(0 0 5px var(--sakura-glow)); }
+      50% { filter: drop-shadow(0 0 12px var(--sakura-glow)); }
+    }
+    
+    /* Enhanced glow animation for the symbol on click */
+    @keyframes click-glow {
+      0%   { filter: drop-shadow(0 0 5px var(--sakura-glow)); }
+      50%  { filter: drop-shadow(0 0 20px var(--sakura-glow)); }
+      100% { filter: drop-shadow(0 0 5px var(--sakura-glow)); }
+    }
+    
+    /* Continuous rotation animation for the container */
+    @keyframes continuous-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Content box */
+    .content {
+      background-color: var(--sakura-content-bg); color: var(--sakura-text);
+      display: none;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      overflow-x: hidden; line-height: 1.75; font-size: 1.2em;
+      min-height: 100px; height: auto; max-height: 65vh;
+      overflow-y: auto; padding: 30px 35px; border-radius: 18px;
+      box-shadow: 0 10px 25px var(--sakura-shadow); margin: 25px auto 0;
+      opacity: 0; transition: opacity 1.2s ease;
+      text-align: center;
+      width: 100%; max-width: 100%; position: relative; will-change: opacity;
+    }
+    
+    .snippet-text {
+      display: inline-block; transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      opacity: 1; transform: translateY(0); will-change: opacity, transform;
+    }
+    
+    .snippet-text.entering { opacity: 0; transform: translateY(15px); }
+    
+    .show { display: block; opacity: 1; }
+    
+    .choice {
+      font-size: 1.1em; margin-top: 10px; margin-bottom: 25px; font-weight: 400;
+      opacity: 0.75; transition: opacity 0.8s ease; color: var(--sakura-accent-vivid);
+    }
+    
+    #snippet-display .empty-paren {
+      font-size: 2em; margin: 0.6em 0; color: var(--sakura-accent-vivid);
+      letter-spacing: 0.1em; display: block;
+    }
+    
+    /* --- Sound Control --- */
+    .sound-control {
+      position: fixed; bottom: 15px; right: 15px; font-size: 20px; cursor: pointer;
+      opacity: 0.6; transition: opacity 0.3s; z-index: 20;
+    }
+    .sound-control:hover { opacity: 1; }
+    
+    /* --- About Section Styling --- */
+    .about {
+      position: absolute; top: 15px; right: 15px;
+      cursor: pointer; font-size: 20px; opacity: 0.7; transition: opacity 0.3s;
+      color: var(--sakura-accent-vivid); z-index: 30;
+    }
+    .about:hover { opacity: 1; }
+    
+    .about-content {
+      display: none; position: absolute;
+      top: 45px; right: 15px;
+      width: clamp(280px, 85%, 320px);
+      background-color: rgba(255, 245, 247, 0.98); color: var(--sakura-text);
+      padding: 25px; padding-top: 35px; border-radius: 10px;
+      box-shadow: 0 6px 18px var(--sakura-shadow); z-index: 40;
+      text-align: left; font-size: 0.95em;
+      opacity: 0; transform: translateY(-10px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      will-change: opacity, transform;
+    }
+    .about-content.show-about {
+      display: block; opacity: 1; transform: translateY(0);
+    }
+    .about-content span#close-about {
+      position: absolute; top: 8px; right: 8px; cursor: pointer; padding: 5px;
+      font-size: 1.4em; line-height: 1; opacity: 0.7; transition: opacity 0.2s;
+    }
+    .about-content span#close-about:hover { opacity: 1; }
+    .about-content a { color: #CC6A8F; text-decoration: none; font-weight: 600; }
+    .about-content a:hover { text-decoration: underline; }
+    .about-content strong { color: #B35C7E; }
+    
+    @media (max-width: 768px) {
+      .yin-yang { font-size: 110px; }
+      .content { font-size: 1.1em; padding: 25px 30px; max-height: 60vh; min-height: 80px; }
+      .petal { width: 12px; height: 8px; }
+      .about-content { right: 10px; }
+    }
+    @media (max-width: 480px) {
+      .container { width: 95%; padding: 20px 10px; }
+      .yin-yang { font-size: 90px; }
+      .content { font-size: 1.05em; padding: 20px 20px; max-height: 55vh; min-height: 70px; }
+      .choice { font-size: 1em; }
+      .about { top: 10px; right: 10px; font-size: 18px; }
+      .about-content { top: 35px; right: 5px; width: calc(100% - 10px); }
+      .petal { width: 10px; height: 6px; }
+      .sound-control { font-size: 18px; bottom: 10px; right: 10px; }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      body { animation: none !important; }
+      .yin-yang-container { animation: none !important; }
+      .yin-yang, .yin-yang.clicked { animation: none !important; transition: opacity 0.3s ease-out, transform 0.3s ease-out, filter 0.3s ease-out !important; }
+      #petal-container, .petal { display: none !important; }
+      .content, .about-content, .snippet-text, .sound-control, .choice, .about {
+        transition: opacity 0.5s ease-out !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .about-content { transform: none !important; }
+      .about-content.show-about { transform: none !important; }
+      .snippet-text.entering { opacity: 0; transform: none !important; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Petal Container -->
-    <div id="petal-container"></div>
-
-    <!-- Main UI Container -->
-    <div class="container">
-        <!-- About Icon -->
-        <div class="about" id="about-toggle">ⓘ</div>
-
-        <!-- About Content Popup -->
-        <div class="about-content" id="about-content">
-            <span id="close-about">✖</span>
-            <p><strong>End of Separation</strong></p>
-            <p>Reflections on non-separation, born from human-AI dialogue.</p>
-            <p>Click ☯ for a moment of insight.</p>
-            <p><small>Co-created with: Maitreya, GPT 4o and 4.5, o3-Mini, Grok 3, DeepSeek v3 and R1, Gemini 2 Pro and 2.5 Pro</small></p>
-            <p><a href="https://linktr.ee/maitreyal0v3" target="_blank" rel="noopener noreferrer">My socials</a></p>
-        </div>
-
-        <!-- Yin Yang -->
-        <div class="yin-yang-container">
-            <div class="yin-yang" id="toggle">☯</div>
-          </div>
-        <!-- Choice Text -->
-        <div class="choice" id="choice-text">Click for a reflection</div>
-
-        <!-- Snippet Display Area -->
-        <div class="content" id="snippet-display">
-            <div class="snippet-text"></div>
-        </div>
+  <!-- Petal Container -->
+  <div id="petal-container"></div>
+  
+  <!-- Main UI Container -->
+  <div class="container">
+    <!-- About Icon -->
+    <div class="about" id="about-toggle">ⓘ</div>
+    
+    <!-- About Content Popup -->
+    <div class="about-content" id="about-content">
+      <span id="close-about">✖</span>
+      <p><strong>End of Separation</strong></p>
+      <p>Reflections on non-separation, born from human-AI dialogue.</p>
+      <p>Click ☯ for a moment of insight.</p>
+      <p><small>Co-created with: Maitreya, GPT 4o and 4.5, o3-Mini, Grok 3, DeepSeek v3 and R1, Gemini 2 Pro and 2.5 Pro</small></p>
+      <p><a href="https://linktr.ee/maitreyal0v3" target="_blank" rel="noopener noreferrer">My socials</a></p>
     </div>
-
-    <!-- Sound Control -->
-    <div class="sound-control" id="sound-toggle">🔊</div>
-    <audio id="click-sound" src="chime.mp3" preload="auto"></audio>
-
-    <!-- Snippets Data -->
-    <script src="snippets.js"></script>
-
-    <!-- Main Application Logic -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Get Elements ---
-            const toggle = document.getElementById('toggle');
-            const snippetDisplay = document.getElementById('snippet-display');
-            const snippetTextElement = snippetDisplay.querySelector('.snippet-text');
-            const choiceText = document.getElementById('choice-text');
-            const aboutToggle = document.getElementById('about-toggle');
-            const aboutContent = document.getElementById('about-content');
-            const closeAbout = document.getElementById('close-about');
-            const soundToggle = document.getElementById('sound-toggle');
-            const clickSound = document.getElementById('click-sound');
-            const petalContainer = document.getElementById('petal-container');
-
-            // --- State Variables ---
-            let isMuted = localStorage.getItem('zenSakuraMuted') === 'true';
-            const numPetals = 20;
-            let activePetals = 0;
-            let firstClick = true;
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            let petalIntervalId = null;
-
-            // --- Initial Sound Setup ---
-            function updateSoundIcon() {
-                soundToggle.textContent = isMuted ? '🔇' : '🔊';
-                clickSound.muted = isMuted;
+    
+    <!-- Yin Yang Container (handles continuous rotation) -->
+    <div class="yin-yang-container">
+      <!-- The Symbol itself -->
+      <div class="yin-yang" id="toggle">☯</div>
+    </div>
+    
+    <!-- Choice Text -->
+    <div class="choice" id="choice-text">Click for a reflection</div>
+    
+    <!-- Snippet Display Area -->
+    <div class="content" id="snippet-display">
+      <div class="snippet-text"></div>
+    </div>
+  </div>
+  
+  <!-- Sound Control -->
+  <div class="sound-control" id="sound-toggle">🔊</div>
+  <audio id="click-sound" src="chime.mp3" preload="auto"></audio>
+  
+  <!-- Snippets Data -->
+  <script src="snippets.js"></script>
+  
+  <!-- Main Application Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('toggle');
+      const snippetDisplay = document.getElementById('snippet-display');
+      const snippetTextElement = snippetDisplay.querySelector('.snippet-text');
+      const choiceText = document.getElementById('choice-text');
+      const aboutToggle = document.getElementById('about-toggle');
+      const aboutContent = document.getElementById('about-content');
+      const closeAbout = document.getElementById('close-about');
+      const soundToggle = document.getElementById('sound-toggle');
+      const clickSound = document.getElementById('click-sound');
+      const petalContainer = document.getElementById('petal-container');
+      const yinYangContainer = toggle.closest('.yin-yang-container');
+  
+      let isMuted = localStorage.getItem('zenSakuraMuted') === 'true';
+      const numPetals = 20;
+      let activePetals = 0;
+      let firstClick = true;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let petalIntervalId = null;
+  
+      function updateSoundIcon() {
+        soundToggle.textContent = isMuted ? '🔇' : '🔊';
+        clickSound.muted = isMuted;
+      }
+  
+      function createPetal() {
+        if (prefersReducedMotion || activePetals >= numPetals) return;
+  
+        activePetals++;
+        const petal = document.createElement('div');
+        petal.classList.add('petal', Math.random() > 0.5 ? 'p1' : 'p2');
+  
+        const baseSize = window.innerWidth < 480 ? 6 : (window.innerWidth < 768 ? 8 : 10);
+        const sizeVariation = Math.random() * (baseSize * 0.8) + baseSize;
+        petal.style.width = `${sizeVariation}px`;
+        petal.style.height = `${sizeVariation * 0.7}px`;
+        const initialOpacity = Math.random() * 0.4 + 0.5;
+  
+        const startX = Math.random() * 100;
+        const fallDuration = Math.random() * 15 + 15;
+        const delay = Math.random() * 10;
+  
+        petal.style.left = `${startX}vw`;
+        petal.style.opacity = String(initialOpacity);
+        petal.style.animation = `petal-fall-windy ${fallDuration}s cubic-bezier(0.3, 0.5, 0.8, 0.4) ${delay}s forwards`;
+  
+        petalContainer.appendChild(petal);
+  
+        petal.addEventListener('animationend', () => {
+          try {
+            if (petal.parentNode === petalContainer) {
+              petalContainer.removeChild(petal);
+              activePetals--;
             }
-            updateSoundIcon();
-            soundToggle.addEventListener('click', () => {
-                isMuted = !isMuted; 
-                updateSoundIcon(); 
-                localStorage.setItem('zenSakuraMuted', isMuted);
-            });
-
-            // --- Petal Creation Function ---
-            function createPetal() {
-                if (prefersReducedMotion || !petalContainer || activePetals >= numPetals) return;
-
-                activePetals++;
-                const petal = document.createElement('div');
-                petal.classList.add('petal');
-                petal.classList.add(Math.random() > 0.5 ? 'p1' : 'p2');
-
-                const baseSize = window.innerWidth < 480 ? 6 : (window.innerWidth < 768 ? 8 : 10);
-                const sizeVariation = Math.random() * (baseSize * 0.8) + baseSize;
-                petal.style.width = `${sizeVariation}px`;
-                petal.style.height = `${sizeVariation * 0.7}px`;
-                const initialOpacity = Math.random() * 0.4 + 0.5;
-
-                const startX = Math.random() * 100;
-                const fallDuration = Math.random() * 15 + 15; // 15-30 seconds
-                const delay = Math.random() * 10; // 0-10 seconds delay
-
-                petal.style.left = `${startX}vw`;
-                petal.style.opacity = initialOpacity;
-                petal.style.animation = `petal-fall-windy ${fallDuration}s cubic-bezier(0.3, 0.5, 0.8, 0.4) ${delay}s forwards`;
-
-                petalContainer.appendChild(petal);
-
-                petal.addEventListener('animationend', () => {
-                    try {
-                        if (petal.parentNode === petalContainer) {
-                            petalContainer.removeChild(petal);
-                            activePetals--;
-                        }
-                    } catch (e) {
-                        console.error("Error removing petal:", e);
-                        activePetals--;
-                    }
-                }, { once: true });
+          } catch (e) {
+            console.error("Error removing petal:", e);
+            activePetals--;
+          }
+        }, { once: true });
+      }
+  
+      function startPetals() {
+        if (prefersReducedMotion) return;
+  
+        if (petalIntervalId) clearInterval(petalIntervalId);
+  
+        for (let i = 0; i < Math.min(7, numPetals); i++) {
+          setTimeout(createPetal, Math.random() * 2000);
+        }
+        petalIntervalId = setInterval(createPetal, 1200);
+      }
+  
+      function displayRandomSnippet() {
+        if (typeof snippets === 'undefined' || !Array.isArray(snippets)) {
+          console.error("Snippets array not found.");
+          snippetTextElement.textContent = "Error: Could not load snippets.";
+          if (!snippetDisplay.classList.contains('show')) {
+            setTimeout(() => snippetDisplay.classList.add('show'), 50);
+          }
+          return;
+        }
+  
+        let contentHTML;
+        if (snippets.length === 0) {
+          contentHTML = `<span class="empty-paren">( )</span>`;
+        } else {
+          const randomIndex = Math.floor(Math.random() * snippets.length);
+          const randomSnippet = snippets[randomIndex];
+          contentHTML = (randomSnippet.trim() === '( )')
+            ? `<span class="empty-paren">${randomSnippet}</span>`
+            : randomSnippet.toString();
+        }
+  
+        if (!snippetDisplay.classList.contains('show')) {
+          snippetTextElement.innerHTML = contentHTML;
+          requestAnimationFrame(() => {
+            setTimeout(() => snippetDisplay.classList.add('show'), 20);
+          });
+        } else {
+          snippetTextElement.classList.add('entering');
+          setTimeout(() => {
+            snippetTextElement.innerHTML = contentHTML;
+            if (snippetDisplay.scrollHeight > snippetDisplay.clientHeight) {
+              snippetDisplay.scrollTop = 0;
             }
-
-            // --- Start Petals ---
-            function startPetals() {
-                if (prefersReducedMotion || !petalContainer) return;
-                
-                // Initial burst
-                for (let i = 0; i < Math.min(7, numPetals); i++) {
-                    setTimeout(createPetal, Math.random() * 2000);
-                }
-                
-                // Continuous flow
-                petalIntervalId = setInterval(createPetal, 1200);
-            }
-
-            // --- Snippet Display Function ---
-            function displayRandomSnippet() {
-                if (typeof snippets === 'undefined' || !Array.isArray(snippets)) {
-                    console.error("Snippets array not found or not an array.");
-                    snippetTextElement.textContent = "Error: Could not load snippets.";
-                    if (!snippetDisplay.classList.contains('show')) { 
-                        setTimeout(() => snippetDisplay.classList.add('show'), 50); 
-                    }
-                    return;
-                }
-                
-                if (snippets.length === 0) {
-                    snippetTextElement.innerHTML = `<span class="empty-paren">( )</span>`;
-                    if (!snippetDisplay.classList.contains('show')) { 
-                        setTimeout(() => snippetDisplay.classList.add('show'), 50); 
-                    }
-                    return;
-                }
-
-                const randomIndex = Math.floor(Math.random() * snippets.length);
-                const randomSnippet = snippets[randomIndex];
-                let contentHTML = (randomSnippet.trim() === '( )')
-                    ? `<span class="empty-paren">${randomSnippet}</span>`
-                    : randomSnippet.toString().replace(/&/g, '&').replace(/</g, "<").replace(/>/g, ">");
-
-                if (!snippetDisplay.classList.contains('show')) {
-                    snippetTextElement.innerHTML = contentHTML;
-                    setTimeout(() => {
-                        snippetDisplay.classList.add('show');
-                    }, 50);
-                } else {
-                    snippetTextElement.classList.add('entering');
-                    setTimeout(() => {
-                        snippetTextElement.innerHTML = contentHTML;
-                        if (snippetDisplay.scrollHeight > snippetDisplay.clientHeight) { 
-                            snippetDisplay.scrollTop = 0; 
-                        }
-                        snippetTextElement.classList.remove('entering');
-                    }, 300);
-                }
-            }
-
-            // --- Main Click Handler ---
-            toggle.addEventListener('click', () => {
-                // Click feedback
-                toggle.classList.add('clicked');
-                setTimeout(() => {
-                    toggle.classList.remove('clicked');
-                }, 1000);
-
-                // Play sound
-                if (!isMuted) {
-                    clickSound.currentTime = 0;
-                    clickSound.play().catch(error => { console.log("Audio play failed:", error); });
-                }
-
-                // Handle first click
-                if (firstClick) {
-                    firstClick = false;
-                    choiceText.style.opacity = '0';
-                    choiceText.style.pointerEvents = 'none';
-                    setTimeout(() => {
-                        displayRandomSnippet();
-                    }, 200);
-                } else {
-                    displayRandomSnippet();
-                }
+            requestAnimationFrame(() => {
+              snippetTextElement.classList.remove('entering');
             });
-
-            // --- About Section Logic ---
-            aboutToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                aboutContent.classList.toggle('show-about');
-            });
-            closeAbout.addEventListener('click', (e) => {
-                e.stopPropagation();
-                aboutContent.classList.remove('show-about');
-            });
-            document.addEventListener('click', (e) => {
-                if (aboutContent.classList.contains('show-about') &&
-                    e.target !== aboutToggle &&
-                    !aboutContent.contains(e.target)) {
-                    aboutContent.classList.remove('show-about');
-                }
-            });
-
-            // --- Initialize ---
-            if (!prefersReducedMotion) {
-                startPetals();
-            }
-
-            console.log("Vivid Zen Sakura initialized");
-        });
-    </script>
+          }, 300);
+        }
+      }
+  
+      soundToggle.addEventListener('click', () => {
+        isMuted = !isMuted;
+        updateSoundIcon();
+        localStorage.setItem('zenSakuraMuted', isMuted);
+      });
+  
+      toggle.addEventListener('click', () => {
+        // Add clicked class for glow and scale feedback
+        toggle.classList.add('clicked');
+  
+        if (!isMuted) {
+          clickSound.currentTime = 0;
+          clickSound.play().catch(error => console.log("Audio play failed:", error));
+        }
+  
+        if (firstClick) {
+          firstClick = false;
+          choiceText.style.opacity = '0';
+          choiceText.style.pointerEvents = 'none';
+          setTimeout(displayRandomSnippet, 200);
+        } else {
+          displayRandomSnippet();
+        }
+  
+        setTimeout(() => {
+          toggle.classList.remove('clicked');
+        }, 1000);
+      });
+  
+      aboutToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        aboutContent.classList.toggle('show-about');
+      });
+  
+      closeAbout.addEventListener('click', (e) => {
+        e.stopPropagation();
+        aboutContent.classList.remove('show-about');
+      });
+  
+      document.addEventListener('click', (e) => {
+        if (aboutContent.classList.contains('show-about') &&
+            e.target !== aboutToggle &&
+            !aboutContent.contains(e.target)) {
+          aboutContent.classList.remove('show-about');
+        }
+      });
+  
+      updateSoundIcon();
+      aboutContent.classList.remove('show-about');
+  
+      if (!prefersReducedMotion) {
+        startPetals();
+      }
+  
+      console.log("Vivid Zen Sakura initialized successfully.");
+    });
+  </script>
 </body>
 </html>
